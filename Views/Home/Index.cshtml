@@ -1,0 +1,30 @@
+﻿@model IEnumerable<Pharm.Models.Product>
+
+@{
+    ViewData["Title"] = "Home";
+}
+
+<!-- Hero Section -->
+<section class="hero">
+    <h2>Welcome to Pharmasuit</h2>
+    <p>Your one-stop shop for pharmacy products!</p>
+</section>
+
+<!-- Featured Products Section -->
+<div class="container">
+    <div class="featured-products">
+        <h3>Featured Products</h3>
+        <div class="product-grid">
+            @foreach (var product in Model)
+            {
+                <div class="product-card">
+                    <img src="~/@product.ImageUrl" alt="@product.Name" />
+                    <h4>@product.Name</h4>
+                    <p>@product.Description</p>
+                    <p><strong>Price:</strong> $@product.Price</p>
+                    <a asp-controller="Products"  asp-action="Details" asp-route-id="@product.Id">View Details</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>

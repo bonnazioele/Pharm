@@ -1,0 +1,44 @@
+﻿@model IEnumerable<Pharm.Models.CartItem>
+
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<div class="checkout-container">
+    <h2 class="checkout-title">Checkout</h2>
+
+    <table class="checkout-table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Product.Name</td>
+                    <td>@item.Quantity</td>
+                    <td>$@item.Product.Price.ToString("F2")</td>
+                    <td>$@(item.Quantity * item.Product.Price)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="checkout-summary">
+        <p class="checkout-total">
+            <strong>Total: </strong> $@Model.Sum(item => item.Quantity * item.Product.Price).ToString("F2")
+        </p>
+    </div>
+
+    <div class="checkout-buttons">
+        <form method="post" asp-action="CheckoutConfirm">
+            <button type="submit" class="confirm-btn">Confirm Order</button>
+        </form>
+        <a asp-action="Index" asp-controller="Products" class="back-btn">Back to Products</a>
+    </div>
+</div>

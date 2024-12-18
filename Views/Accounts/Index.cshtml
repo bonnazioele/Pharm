@@ -1,0 +1,52 @@
+﻿@model IEnumerable<Pharm.Models.CartItem>
+
+@{
+    ViewData["Title"] = "Your Cart";
+}
+
+<div class="cart-container">
+    <h2>Your Shopping Cart</h2>
+
+    @if (Model != null && Model.Any())
+    {
+        <table class="cart-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Product.Name</td>
+                        <td>@item.Quantity</td>
+                        <td>$@item.Price.ToString("F2")</td>
+                        <td>$@(item.Quantity * item.Price).ToString("F2")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <!-- Total Amount -->
+        <p class="cart-total">
+            Total: $@Model.Sum(item => item.Quantity * item.Price).ToString("F2")
+        </p>
+
+        <!-- Checkout and Back Buttons -->
+        <div style="text-align: right;">
+            <a asp-action="Checkout" class="checkout-btn">Proceed to Checkout</a>
+            <a asp-action="Index" asp-controller="Products" class="back-btn">Continue Shopping</a>
+        </div>
+    }
+    else
+    {
+        <p style="text-align: center; font-size: 18px;">Your cart is empty!</p>
+        <div style="text-align: center; margin-top: 20px;">
+            <a asp-action="Index" asp-controller="Products" class="checkout-btn">Browse Products</a>
+        </div>
+    }
+</div>
