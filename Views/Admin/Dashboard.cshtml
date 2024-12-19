@@ -1,0 +1,34 @@
+﻿@model IEnumerable<Pharm.Models.Order>
+
+
+@foreach (var order in Model)
+{
+    <tr>
+        <td>@order.Id</td>
+        <td>@order.UserId</td>
+        <td>@order.TotalAmount.ToString("C")</td>
+        <td>@order.OrderStatus</td>
+        <td>
+            <form asp-action="UpdateOrderStatus" asp-controller="Admin" method="post">
+                <input type="hidden" name="orderId" value="@order.Id" />
+                <select name="status" class="form-select form-select-sm">
+                    @{
+                        var statuses = new[] { "Pending", "Processing", "Shipped", "Delivered", "Cancelled" };
+                        foreach (var status in statuses)
+                        {
+                            if (order.OrderStatus == status)
+                            {
+                                <option value="@status" selected>@status</option>
+                            }
+                            else
+                            {
+                                <option value="@status">@status</option>
+                            }
+                        }
+                    }
+                </select>
+                <button type="submit" class="btn btn-primary btn-sm">Update</button>
+            </form>
+        </td>
+    </tr>
+}

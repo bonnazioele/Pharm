@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Pharm.Data;
 
@@ -11,9 +12,11 @@ using Pharm.Data;
 namespace Pharm.Migrations
 {
     [DbContext(typeof(PharmContext))]
-    partial class PharmContextModelSnapshot : ModelSnapshot
+    [Migration("20241219174523_UpdateProductTable")]
+    partial class UpdateProductTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

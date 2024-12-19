@@ -1,44 +1,91 @@
 ﻿@model IEnumerable<Pharm.Models.CartItem>
 
-@{
-    ViewData["Title"] = "Checkout";
-}
-
-<div class="checkout-container">
-    <h2 class="checkout-title">Checkout</h2>
-
-    <table class="checkout-table">
-        <thead>
-            <tr>
-                <th>Product</th>
-                <th>Quantity</th>
-                <th>Price</th>
-                <th>Subtotal</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
+<div class="container mt-5">
+    <h2>Checkout</h2>
+    <form asp-action="ProcessPayment" method="post" enctype="multipart/form-data">
+        <table class="table">
+            <thead>
                 <tr>
-                    <td>@item.Product.Name</td>
-                    <td>@item.Quantity</td>
-                    <td>$@item.Product.Price.ToString("F2")</td>
-                    <td>$@(item.Quantity * item.Product.Price)</td>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Subtotal</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Product.Name</td>
+                        <td>@item.Quantity</td>
+                        <td>@item.Product.Price.ToString("C")</td>
+                        <td>@(item.Quantity * item.Product.Price)</td>
+                    </tr>
 
-    <div class="checkout-summary">
-        <p class="checkout-total">
-            <strong>Total: </strong> $@Model.Sum(item => item.Quantity * item.Product.Price).ToString("F2")
-        </p>
-    </div>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                    <td><strong>@Model.Sum(c => c.Quantity * c.Product.Price).ToString("C")</strong></td>
+                </tr>
+            </tfoot>
+        </table>
 
-    <div class="checkout-buttons">
-        <form method="post" asp-action="CheckoutConfirm">
-            <button type="submit" class="confirm-btn">Confirm Order</button>
-        </form>
-        <a asp-action="Index" asp-controller="Products" class="back-btn">Back to Products</a>
-    </div>
+        <div class="mb-3">
+            <h4>Select Payment Method</h4>
+            <div>
+                <input type="radio" name="paymentMethod" value="CashOnDelivery" id="cod" />
+                <label for="cod">Cash on Delivery</label>
+            </div>
+            <div>
+                <input type="radio" name="paymentMethod" value="CardPayment" id="card" />
+                <label for="card">Card Payment</label>
+            </div>
+            <div>
+                <input type="radio" name="paymentMethod" value="OnlinePayment" id="online" />
+                <label for="online">Online Payment</label>
+            </div>
+        </div>
+
+        <div id="cardPaymentFields" style="display:none;">
+            <h4>Card Details</h4>
+            <div class="mb-3">
+                <label for="CardHolderName">Card Holder Name</label>
+                <input type="text" name="CardHolderName" id="CardHolderName" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label for="CardNumber">Card Number</label>
+                <input type="text" name="CardNumber" id="CardNumber" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label for="ExpiryDate">Expiry Date</label>
+                <input type="text" name="ExpiryDate" id="ExpiryDate" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label for="CVV">CVV</label>
+                <input type="text" name="CVV" id="CVV" class="form-control" />
+            </div>
+        </div>
+
+
+        <button type="submit" class="btn btn-primary">Place Order</button>
+    </form>
 </div>
+
+
+<script>
+    const paymentOptions = document.querySelectorAll('input[name="paymentMethod"]');
+    const cardPaymentFields = document.getElementById('cardPaymentFields');
+    const prescriptionUpload = document.getElementById('prescriptionUpload');
+
+    paymentOptions.forEach(option => {
+        option.addEventListener('change', () => {
+            cardPaymentFields.style.display = option.value === 'CardPayment' ? 'block' : 'none';
+        });
+    });
+
+    // Check if any product requires a prescription
+  
+
+</script>

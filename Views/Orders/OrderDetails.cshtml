@@ -1,0 +1,32 @@
+﻿@model Pharm.Models.Order
+
+<div class="container mt-5">
+    <h2>Order Details</h2>
+    <p><strong>Order ID:</strong> @Model.Id</p>
+    <p><strong>Order Date:</strong> @Model.OrderDate.ToString("yyyy-MM-dd")</p>
+    <p><strong>Total Amount:</strong> @Model.TotalAmount.ToString("C")</p>
+    <p><strong>Status:</strong> @Model.OrderStatus</p>
+
+    <h3>Products</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var detail in Model.OrderDetails)
+            {
+                <tr>
+                    <td>@detail.Product.Name</td>
+                    <td>@detail.Quantity</td>
+                    <td>@detail.Price.ToString("C")</td>
+                    <td>@(detail.Quantity * detail.Price).ToString("C")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

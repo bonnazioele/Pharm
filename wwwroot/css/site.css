@@ -16,10 +16,9 @@ a {
     a:hover {
         color: #0056b3;
     }
-
-/* Header Styling */
+/* Updated Header Styling */
 header {
-    background-color: #007bff;
+    background-color: #007bff; /* Blue background */
     color: white;
     padding: 15px 20px;
     display: flex;
@@ -28,10 +27,7 @@ header {
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-    header h1 {
-        margin: 0;
-        font-size: 24px;
-    }
+
 
 nav ul {
     list-style: none;
@@ -41,15 +37,15 @@ nav ul {
     padding: 0;
 }
 
-    nav ul li a {
-        color: white;
-        font-weight: bold;
-        transition: color 0.3s;
-    }
+nav ul li a {
+    color: white; /* Ensure text color is white to blend with the blue header */
+    font-weight: bold;
+    transition: color 0.3s;
+}
 
-        nav ul li a:hover {
-            color: #d4e2ff;
-        }
+nav ul li a:hover {
+    color: #d4e2ff; /* Lighten color on hover */
+}
 
 /* Hero Section */
 .hero {

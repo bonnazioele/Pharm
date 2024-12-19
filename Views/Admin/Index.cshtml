@@ -1,0 +1,71 @@
+﻿@{
+    ViewData["Title"] = "Admin Portal";
+}
+
+<div class="container mt-5">
+    @if (User.Identity.IsAuthenticated && User.HasClaim(c => c.Type == "Admin"))
+    {
+        <!-- Admin Dashboard -->
+        <h2>Admin Dashboard</h2>
+        <p>Welcome, @User.Identity.Name!</p>
+
+        <h4>Manage Orders</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>User</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Placeholder: Add order data dynamically here -->
+                <tr>
+                    <td>1</td>
+                    <td>nina</td>
+                    <td>₱5.99</td>
+                    <td>
+                        <select class="form-select" name="status">
+                            <option>Pending</option>
+                            <option>Processing</option>
+                            <option>Shipped</option>
+                            <option>Delivered</option>
+                            <option>Cancelled</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button class="btn btn-primary btn-sm">Update</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <form method="post" asp-action="Logout">
+            <button type="submit" class="btn btn-danger">Logout</button>
+        </form>
+    }
+    else
+    {
+        <!-- Admin Login -->
+        <h2>Admin Login</h2>
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Error"]</div>
+        }
+
+        <form method="post" asp-action="Login">
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" name="username" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+    }
+</div>

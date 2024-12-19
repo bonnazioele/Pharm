@@ -26,40 +26,39 @@ namespace Pharm.Controllers
             return View();
         }
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(string username, string email, string password)
+        [HttpPost]
+        public async Task<IActionResult> Register(string username, string email, string password, string address, string phoneNumber)
         {
-            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(phoneNumber))
             {
-                ModelState.AddModelError("", "All fields are required.");
+                TempData["ErrorMessage"] = "All fields are required.";
                 return View();
             }
 
-            // Check if the email already exists
-            if (await _context.Accounts.AnyAsync(a => a.Email == email))
+            var existingUser = await _context.Accounts.FirstOrDefaultAsync(a => a.Email == email);
+            if (existingUser != null)
             {
-                ModelState.AddModelError("", "An account with this email already exists.");
+                TempData["ErrorMessage"] = "Email is already registered.";
                 return View();
             }
 
-            // Hash the password
-            var passwordHasher = new Microsoft.AspNetCore.Identity.PasswordHasher<Account>();
-            var account = new Account
+            var newUser = new Account
             {
                 UserName = username,
-                Email = email
+                Email = email,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
+                Address = address,
+                PhoneNumber = phoneNumber // Set the phone number
             };
-            account.PasswordHash = passwordHasher.HashPassword(account, password);
 
-            // Save the account to the database
-            _context.Accounts.Add(account);
+            _context.Accounts.Add(newUser);
             await _context.SaveChangesAsync();
 
-            // Log in the user
             var claims = new List<Claim>
     {
-        new Claim(ClaimTypes.Name, account.UserName),
-        new Claim(ClaimTypes.Email, account.Email)
+        new Claim(ClaimTypes.Name, newUser.UserName),
+        new Claim(ClaimTypes.Email, newUser.Email),
+        new Claim(ClaimTypes.MobilePhone, newUser.PhoneNumber) // Add phone number as a claim
     };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -67,8 +66,60 @@ namespace Pharm.Controllers
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
+            TempData["SuccessMessage"] = "Registration successful. Welcome!";
             return RedirectToAction("Index", "Home");
         }
+
+
+
+        [HttpGet]
+        public IActionResult EditProfile()
+        {
+            var userId = User.Identity.Name;
+            var user = _context.Accounts.FirstOrDefault(u => u.UserName == userId);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var model = new EditProfileViewModel
+            {
+                UserName = user.UserName,
+                Email = user.Email,
+                Address = user.Address,
+                PhoneNumber = user.PhoneNumber
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult EditProfile(EditProfileViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var userId = User.Identity.Name;
+                var user = _context.Accounts.FirstOrDefault(u => u.UserName == userId);
+
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                user.UserName = model.UserName;
+                user.Email = model.Email;
+                user.Address = model.Address;
+                user.PhoneNumber = model.PhoneNumber;
+
+                _context.SaveChanges();
+                TempData["SuccessMessage"] = "Profile updated successfully!";
+                return RedirectToAction("EditProfile");
+            }
+
+            return View(model);
+        }
+
 
 
         // ========================= LOGIN =========================
